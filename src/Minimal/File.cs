@@ -38,18 +38,18 @@
         }
 
         /// <summary>
-        ///     Creates a new file.
+        /// Opens a <see cref="FileStream"/> for access at the given path. Ensure stream is correctly disposed.
         /// </summary>
-        public static void CreateFile(PathInfo pathInfo, FileAccess fileAccess = FileAccess.Write, FileShare fileShare = FileShare.None, FileMode fileMode = FileMode.Create, FileAttributes fileAttributes = 0)
+        public static FileStream OpenFileStream(PathInfo pathInfo, FileAccess fileAccess, FileMode fileOption = FileMode.Open, FileShare shareMode = FileShare.Read, Int32 buffer = 0)
         {
-            using (var fileHandle = Win32SafeNativeMethods.CreateFile(pathInfo.FullNameUnc, fileAccess, fileShare, IntPtr.Zero, fileMode, fileAttributes, IntPtr.Zero))
+            var fileHandle = Win32SafeNativeMethods.CreateFile(pathInfo.FullNameUnc, fileAccess, shareMode, IntPtr.Zero, fileOption, 0, IntPtr.Zero);
+            var win32Error = Marshal.GetLastWin32Error();
+            if (fileHandle.IsInvalid)
             {
-                var win32Error = Marshal.GetLastWin32Error();
-                if (fileHandle.IsInvalid)
-                {
-                    NativeExceptionMapping(pathInfo.FullName, win32Error);
-                }
+                NativeExceptionMapping(pathInfo.FullName, win32Error); // Throws an exception
             }
+
+            return buffer > 0 ? new FileStream(fileHandle, fileAccess, buffer) : new FileStream(fileHandle, fileAccess);
         }
 
         /// <summary>
@@ -86,6 +86,43 @@
         {
             RemoveAttribute(fileInfo.PathInfo, FileAttributes.ReadOnly);
             DeleteFile(fileInfo.PathInfo);
+        }
+
+        /// <summary>
+        /// Deletes all files in the given directory. On request  all contents, too.
+        /// </summary>
+        /// <param name="directoryInfo">Info of directory to clear</param>
+        /// <param name="recursive">If <paramref name="recursive"/> is true then all subfolders are also deleted.</param>
+        /// <remarks>Function loads every file and attribute. Alls read-only flags will be removed before removing.</remarks>
+        public static void DeleteDirectory(DirectoryDetail directoryInfo, bool recursive = false)
+        {
+            // Contents
+            if (recursive)
+            {
+                // search all contents
+                var subFiles = FindPaths(directoryInfo.FullNameUnc, pathFormatReturn: UncOrRegular.UNC);
+
+                foreach (var item in subFiles)
+                {
+                    DeleteFile(item);
+                }
+
+
+                var subDirs = EnumerateDirectories(directoryInfo.PathInfo);
+
+                foreach (var subDir in subDirs)
+                {
+                    DeleteDirectory(subDir, true);
+                }
+            }
+
+            // Remove specified
+            var removed = Win32SafeNativeMethods.RemoveDirectory(directoryInfo.FullNameUnc);
+            var win32Error = Marshal.GetLastWin32Error();
+            if (!removed)
+            {
+                NativeExceptionMapping(directoryInfo.FullName, win32Error);
+            }
         }
 
         /// <summary>
@@ -933,7 +970,7 @@
                     // if it's a file, add to the collection
                     if (!ContainsFileAttribute(win32FindData.dwFileAttributes, FileAttributes.Directory))
                     {
-                        if (filterType != null && ((FileOrDirectory)filterType == FileOrDirectory.File))
+                        if (filterType == null || ((FileOrDirectory)filterType == FileOrDirectory.File))
                         {
                             // It's a file
                             results.Add(FormatPathByType(pathFormatReturn, resultPath));
@@ -1058,16 +1095,15 @@
         /// </summary>
         /// <param name="sourceFilePath">Full source path</param>
         /// <param name="targetFilePath">Full target path</param>
-        /// <param name="win32Error">Last error occured</param>
         /// <param name="overwrite">true to overwrite existing files</param>
         /// <returns>True if copy succeeded, false if not. Check last Win32 Error to get further information.</returns>
-        public static bool CopyFile(string sourceFilePath, string targetFilePath, out Int32 win32Error, bool overwrite = false)
+        public static bool CopyFile(PathInfo sourceFilePath, PathInfo targetFilePath, bool overwrite = false)
         {
             bool failOnExists = !overwrite;
 
-            // Kopieren
-            bool result = Win32SafeNativeMethods.CopyFile(sourceFilePath, targetFilePath, failOnExists);
-            win32Error = !result ? Marshal.GetLastWin32Error() : 0;
+            bool result = Win32SafeNativeMethods.CopyFile(sourceFilePath.FullNameUnc, targetFilePath.FullNameUnc, failOnExists);
+            int win32Error = Marshal.GetLastWin32Error();
+            NativeExceptionMapping(sourceFilePath.FullName, win32Error);
             return result;
         }
 

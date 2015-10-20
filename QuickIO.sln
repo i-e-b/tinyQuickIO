@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickIO", "src\QuickIO.cspr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minimal", "src\Minimal\Minimal.csproj", "{0F46CCEC-5AA5-4FE2-B9FB-CFBA205FCBCA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "tests\IntegrationTests\IntegrationTests.csproj", "{31A4B9D4-0F73-42ED-AB4C-D9F7511095EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{0F46CCEC-5AA5-4FE2-B9FB-CFBA205FCBCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F46CCEC-5AA5-4FE2-B9FB-CFBA205FCBCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F46CCEC-5AA5-4FE2-B9FB-CFBA205FCBCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31A4B9D4-0F73-42ED-AB4C-D9F7511095EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31A4B9D4-0F73-42ED-AB4C-D9F7511095EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31A4B9D4-0F73-42ED-AB4C-D9F7511095EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31A4B9D4-0F73-42ED-AB4C-D9F7511095EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
