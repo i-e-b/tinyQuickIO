@@ -1,6 +1,5 @@
 namespace Minimal
 {
-    using System;
     using System.Security.Permissions;
     using Microsoft.Win32.SafeHandles;
 
