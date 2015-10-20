@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickIO", "src\QuickIO.csproj", "{6B312E6C-9C98-4FF2-A877-C52818545B8C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minimal", "src\Minimal\Minimal.csproj", "{0F46CCEC-5AA5-4FE2-B9FB-CFBA205FCBCA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6B312E6C-9C98-4FF2-A877-C52818545B8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B312E6C-9C98-4FF2-A877-C52818545B8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B312E6C-9C98-4FF2-A877-C52818545B8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B312E6C-9C98-4FF2-A877-C52818545B8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F46CCEC-5AA5-4FE2-B9FB-CFBA205FCBCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F46CCEC-5AA5-4FE2-B9FB-CFBA205FCBCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F46CCEC-5AA5-4FE2-B9FB-CFBA205FCBCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F46CCEC-5AA5-4FE2-B9FB-CFBA205FCBCA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
