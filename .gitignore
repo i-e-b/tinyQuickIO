@@ -1,6 +1,7 @@
 *.DotSettings
 obj
 bin
+lib
 deploy
 *.csproj.user
 *.suo

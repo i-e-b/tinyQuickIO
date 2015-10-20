@@ -35,7 +35,7 @@
         }
 
         [Test]
-        public static void files_can_be_created_in_very_long_paths()
+        public static void files_can_be_created_and_written_and_read_and_copied_in_very_long_paths()
         {
             // Create a >255 length path
             const string path = TempRoot + "\\QIO\\Pseudopseudohypoparathyroidism\\Pneumonoultramicroscopicsilicovolcanoconiosis\\Floccinaucinihilipilification\\Antidisestablishmentarianism\\Honorificabilitudinitatibus\\Donau­dampf­schiffahrts­elektrizitäten­haupt­betriebs­werk­bau­unter­beamten­gesellschaft";

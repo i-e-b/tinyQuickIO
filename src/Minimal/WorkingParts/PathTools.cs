@@ -65,16 +65,6 @@ namespace Minimal
         public static char DirectorySeparatorChar = Path.DirectorySeparatorChar;
 
         /// <summary>
-        /// Checks if path exists
-        /// </summary>
-        /// <param name="path">Path to check</param>
-        /// <returns>True on exists</returns>
-        public static Boolean Exists(String path)
-        {
-            return File.Exists(path);
-        }
-
-        /// <summary>
         /// Converts unc path to regular path
         /// </summary>
         public static String ToRegularPath(String anyFullname)
