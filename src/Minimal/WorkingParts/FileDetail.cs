@@ -18,41 +18,25 @@
         }
 
         /// <summary>
-        /// Checks whether the given attribute in the collection is included.
-        /// </summary>
-        /// <param name="source"><see cref="FileAttributes"/> collection</param>
-        /// <param name="attr">Attribute to check</param>
-        /// <returns>True if exists, false if not</returns>
-        public static Boolean ContainsFileAttribute(FileAttributes source, FileAttributes attr)
-        {
-            return (source & attr) != 0;
-        }
-        /// <summary>
         /// True if file is readonly. Cached.
         /// </summary>
         public Boolean IsReadOnly
         {
             get
             {
-                return ContainsFileAttribute(Attributes, FileAttributes.ReadOnly);
+                return (Attributes & FileAttributes.ReadOnly) != 0;
             }
             set
             {
-                // Force Attribute Existance
                 ForceFileAttributesExistance(Attributes, FileAttributes.ReadOnly, value);
-
-                // Commit current attributes
-                File.SetAttributes(PathInfo, Attributes);
+                NativeIO.SetAttributes(PathInfo, Attributes);
             }
         }
 
-
         /// <summary>
-        /// QuickIOPathInfo Container
+        /// PathInfo Container
         /// </summary>
         public PathInfo PathInfo { get; protected internal set; }
-
-
 
         /// <summary>
         /// Initializes a new instance of the QuickIOAbstractBase class, which acts as a wrapper for a file path.
@@ -92,10 +76,6 @@
         /// </summary>
         public PathInfo Parent { get { return PathInfo.Parent; } }
 
-
-        public LocalOrShare PathLocation { get { return PathInfo.PathLocation; } }
-        public UncOrRegular PathType { get { return PathInfo.PathType; } }
-
         public FileSecurity GetFileSystemSecurity()
         {
             return PathInfo.GetFileSystemSecurity();
@@ -116,7 +96,6 @@
         /// </summary>
         public FileAttributes Attributes { get; protected internal set; }
 
-        #region Time Properties
         #region UNC Times
         /// <summary>
         /// Gets the creation time (UTC)
@@ -205,18 +184,11 @@
         /// </summary>
         public DateTime LastWriteTime { get { return LastWriteTimeUtc.ToLocalTime(); } }
         #endregion
-        #endregion
 
-        #region Overrides
-        /// <summary>
-        /// Returns <see cref="FullName"/>
-        /// </summary>
-        /// <returns><see cref="FullName"/></returns>
         public override string ToString()
         {
             return FullName;
         }
-        #endregion
 
         /// <summary>
         /// Win32ApiFindData bag
@@ -268,28 +240,12 @@
         /// <summary>
         /// Create new instance of <see cref="DirectoryDetail"/>
         /// </summary>
-        public DirectoryDetail(String path)
-            : this(new PathInfo(path))
-        {
-
-        }
+        public DirectoryDetail(String path) : this(new PathInfo(path)) { }
 
         /// <summary>
         /// Create new instance of <see cref="DirectoryDetail"/>
         /// </summary>
-        public DirectoryDetail(FileSystemInfo directoryInfo)
-            : this(new PathInfo(directoryInfo.FullName))
-        {
-
-        }
-
-        /// <summary>
-        /// Create new instance of <see cref="DirectoryDetail"/>
-        /// </summary>
-        public DirectoryDetail(PathInfo pathInfo)
-            : this(pathInfo, pathInfo.IsRoot ? null : File.GetFindDataFromPath(pathInfo))
-        {
-        }
+        public DirectoryDetail(PathInfo pathInfo) : this(pathInfo, pathInfo.IsRoot ? null : NativeIO.GetFindDataFromPath(pathInfo)) { }
 
         /// <summary>
         /// Creates the folder information on the basis of the path and the handles
@@ -304,23 +260,6 @@
                 RetriveDateTimeInformation(win32FindData);
             }
         }
-
-        /// <summary>
-        /// Creates the folder information on the basis of the path and the handles
-        /// </summary>
-        /// <param name="fullname">Full path to the directory</param>
-        /// <param name="win32FindData"><see cref="Win32FindData"/></param>
-        internal DirectoryDetail(String fullname, Win32FindData win32FindData)
-            : this(new PathInfo(fullname), win32FindData)
-        {
-
-        }
-
-        /// <summary>
-        /// Returns true if current path is root
-        /// </summary>
-        public Boolean IsRoot { get { return PathInfo.IsRoot; } }
-
 
         /// <summary>
         /// Determines the time stamp of the given <see cref="Win32FindData"/>
@@ -339,30 +278,12 @@
         /// <summary>
         /// Create new instance of <see cref="FileDetail"/>
         /// </summary>
-        public FileDetail(String path)
-            : this(new PathInfo(path))
-        {
-
-        }
+        public FileDetail(String path) : this(new PathInfo(path)) { } 
 
         /// <summary>
         /// Create new instance of <see cref="FileDetail"/>
         /// </summary>
-        public FileDetail(FileSystemInfo fileInfo)
-            : this(new PathInfo(fileInfo.FullName))
-        {
-
-        }
-
-
-        /// <summary>
-        /// Create new instance of <see cref="FileDetail"/>
-        /// </summary>
-        public FileDetail(PathInfo pathInfo)
-            : this(pathInfo, File.GetFindDataFromPath(pathInfo))
-        {
-        }
-
+        public FileDetail(PathInfo pathInfo) : this(pathInfo, NativeIO.GetFindDataFromPath(pathInfo)) { }
 
         /// <summary>
         /// Creates the file information on the basis of the path and <see cref="Win32FindData"/>

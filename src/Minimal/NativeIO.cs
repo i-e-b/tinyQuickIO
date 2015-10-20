@@ -9,7 +9,7 @@
     using Microsoft.Win32.SafeHandles;
 
     [FileIOPermission(SecurityAction.Demand, AllFiles = FileIOPermissionAccess.AllAccess)]
-    public static class File
+    public static class NativeIO
     {
         /// <summary>End of enumeration indicator in Win32</summary>
         public const Int32 ERROR_NO_MORE_FILES = 18;
@@ -325,7 +325,7 @@
                     }
                 }
 
-                // Treffer auswerten
+                // Add any matching non-system results to the output
                 do
                 {
                     // Ignore . and .. directories
@@ -404,7 +404,7 @@
                     // Check for Directory
                     if (ContainsFileAttribute(win32FindData.dwFileAttributes, FileAttributes.Directory))
                     {
-                        yield return new DirectoryDetail(resultPath, win32FindData);
+                        yield return new DirectoryDetail(new PathInfo(resultPath), win32FindData);
 
                         // SubFolders?!
                         if (searchOption == SearchOption.AllDirectories)

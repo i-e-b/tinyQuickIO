@@ -118,7 +118,7 @@ namespace Minimal
                 {
                     throw new NotSupportedException("Root directory does not provide owner access");
                 }
-                return _findData ?? (_findData = File.GetFindDataFromPath(this));
+                return _findData ?? (_findData = NativeIO.GetFindDataFromPath(this));
             }
             set
             {
@@ -164,29 +164,8 @@ namespace Minimal
         {
             get
             {
-                return File.Exists(this);
+                return NativeIO.Exists(this);
             }
-        }
-
-        ///// <summary>
-        ///// Returns true if path exists. Checks <see cref="QuickIOFileSystemEntryType"/>
-        ///// </summary>
-        ///// <returns></returns>
-        //public Boolean CheckExistance( QuickIOFileSystemEntryType? systemEntryType = null )
-        //{
-        //    return systemEntryType == null ? InternalQuickIO.Exists( this ) : InternalQuickIOCommon.Exists( FullNameUnc, ( QuickIOFileSystemEntryType ) systemEntryType );
-        //}
-
-        /// <summary>
-        /// Returns true if path exists. Checks <see cref="FileOrDirectory"/> against the file system
-        /// </summary>
-        public FileOrDirectory SystemEntryType
-        {
-            get
-            {
-                return File.DetermineFileSystemEntry(this);
-            }
-
         }
 
         /// <summary>

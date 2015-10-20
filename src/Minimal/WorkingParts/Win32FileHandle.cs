@@ -19,15 +19,6 @@ namespace Minimal
         }
 
         /// <summary>
-        /// Initializes a new instance of the Win32ApiFileHandle class, specifying whether the handle is to be reliably released.
-        /// </summary>
-        public Win32FileHandle(IntPtr preExistingHandle, bool ownsHandle)
-            : base(ownsHandle)
-        {
-            SetHandle(preExistingHandle);
-        }
-
-        /// <summary>
         /// When overridden in a derived class, executes the code required to free the handle.
         /// </summary>
         protected override bool ReleaseHandle()

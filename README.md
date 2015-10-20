@@ -7,3 +7,10 @@ A lot of the helpful interfaces, overloaded methods and meaningful exceptions ar
 
 This project will not follow changes to QuickIO.
 
+
+Getting started
+---------------
+
+Look at the test suites for examples.
+Most calls are based on the `NativeIO` static object in the `Minimal` namespace.
+

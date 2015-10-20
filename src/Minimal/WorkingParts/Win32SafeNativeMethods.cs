@@ -92,21 +92,6 @@ namespace Minimal
             IntPtr hTemplateFile);
 
         /// <summary>
-        /// Open handle for appending
-        /// <br/>
-        /// FileMode has to be 0x0004 for internal appending mode
-        /// </summary>
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode, EntryPoint = "CreateFile")]
-        internal static extern SafeFileHandle CreateFileForAppend(
-            string fullName,
-            [MarshalAs(UnmanagedType.U4)] uint dwDesiredAccess,
-            [MarshalAs(UnmanagedType.U4)] FileShare dwShareMode,
-            IntPtr lpSecurityAttributes,
-            [MarshalAs(UnmanagedType.U4)] FileMode dwCreationDisposition,
-            [MarshalAs(UnmanagedType.U4)] FileAttributes dwFlagsAndAttributes,
-            IntPtr hTemplateFile);
-
-        /// <summary>
         /// Finds first file of given path
         /// </summary>
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
@@ -170,16 +155,6 @@ namespace Minimal
         [DllImport("kernel32.dll", SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern IntPtr LocalFree(IntPtr handle);
 
-        /// <summary>
-        /// QuickIOShareInfo information
-        /// </summary>
-        /// <returns></returns>
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool GetDiskFreeSpaceEx(string uncPath,
-            out UInt64 freeBytes,
-            out UInt64 totalBytes,
-            out UInt64 totalFreeBytes);
         #endregion
 
         #region netapi32.dll

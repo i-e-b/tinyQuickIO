@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Minimal
+﻿namespace Minimal
 {
+    using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.IO;
+    using System.Linq;
 
     public abstract class MetadataBase
     {
-        #region Fields
-        private string _fullName;
-        #endregion
-
         /// <summary>
         /// Ctor
         /// </summary>
@@ -34,18 +29,6 @@ namespace Minimal
             Name = win32FindData.cFileName;
 
             Attributes = win32FindData.dwFileAttributes;
-        }
-
-
-        /// <summary>
-        /// Path to file or directory (regular format)
-        /// </summary>
-        public String FullName
-        {
-            get
-            {
-                return _fullName ?? (_fullName = PathTools.ToRegularPath(FullNameUnc));
-            }
         }
 
         /// <summary>
@@ -141,16 +124,6 @@ namespace Minimal
         /// Size of the file. 
         /// </summary>
         public UInt64 Bytes { get; private set; }
-
-
-        /// <summary>
-        /// Returns a new instance of <see cref="QuickIOFileInfo"/> of the current file
-        /// </summary>
-        /// <returns><see cref="QuickIOFileInfo"/></returns>
-        public FileDetail QuickIOFileInfo()
-        {
-            return new FileDetail(ToPathInfo());
-        }
     }
 
     /// <summary>
@@ -184,7 +157,7 @@ namespace Minimal
         /// </summary>
         public ReadOnlyCollection<FileMetadata> Files { get; internal set; }
 
-        private UInt64? _bytes;
+        UInt64? _bytes;
         /// <summary>
         /// Size of the file. 
         /// </summary>
@@ -196,20 +169,10 @@ namespace Minimal
                 {
                     return (UInt64)_bytes;
                 }
-                _bytes = Directories.Aggregate<DirectoryMetadata, ulong>(0, (current, t) => current + +t.Bytes)
-                       + Files.Aggregate(_bytes, (current, t) => current + +t.Bytes);
+                _bytes = Directories.Aggregate<DirectoryMetadata, ulong>(0, (current, t) => current + +t.Bytes) + Files.Aggregate(_bytes, (current, t) => current + +t.Bytes);
 
                 return _bytes ?? 0;
             }
-        }
-
-        /// <summary>
-        /// Returns a new instance of <see cref="DirectoryDetail"/> of the current directory
-        /// </summary>
-        /// <returns><see cref="DirectoryDetail"/></returns>
-        public DirectoryDetail ToDirectoryInfo()
-        {
-            return new DirectoryDetail(ToPathInfo());
         }
     }
 }

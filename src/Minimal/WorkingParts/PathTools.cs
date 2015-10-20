@@ -9,60 +9,12 @@ namespace Minimal
     /// </summary>
     public static class PathTools
     {
-        /// <summary>
-        /// Maximum allowed length of a regular path
-        /// </summary>
-        public const Int32 MaxRegularPathLength = 260;
-
-        /// <summary>
-        /// Maximum allowed length of a regular folder path
-        /// </summary>
-        public const Int32 MaxSimpleDirectoryPathLength = 247;
-
-        /// <summary>
-        /// Maximum allowed length of an UNC Path
-        /// </summary>
-        public const Int32 MaxUncPathLength = 32767;
-
-        /// <summary>
-        /// Regular local path prefix
-        /// </summary>
         public const String RegularLocalPathPrefix = @"";
-
-        /// <summary>
-        /// Path prefix for shares
-        /// </summary>
         public const String RegularSharePathPrefix = @"\\";
-
-        /// <summary>
-        /// Length of Path prefix for shares
-        /// </summary>
         public static readonly Int32 RegularSharePathPrefixLength = RegularSharePathPrefix.Length;
-
-        /// <summary>
-        /// UNC prefix for regular paths
-        /// </summary>
         public const String UncLocalPathPrefix = @"\\?\";
-
-        /// <summary>
-        /// Length of UNC prefix for regular paths
-        /// </summary>
-        public static readonly Int32 UncLocalPathPrefixLength = UncLocalPathPrefix.Length;
-
-        /// <summary>
-        /// UNC prefix for shares
-        /// </summary>
         public const String UncSharePathPrefix = @"\\?\UNC\";
-
-        /// <summary>
-        /// Length of UNC prefix for shares
-        /// </summary>
         public static readonly Int32 UncSharePathPrefixLength = UncSharePathPrefix.Length;
-
-        /// <summary>
-        /// Directory Separator Char
-        /// </summary>
-        public static char DirectorySeparatorChar = Path.DirectorySeparatorChar;
 
         /// <summary>
         /// Converts unc path to regular path
@@ -80,37 +32,6 @@ namespace Minimal
             }
             return anyFullname;
         }
-
-        /// <summary>
-        /// Converts regular path to unc path
-        /// </summary>
-        public static String ToUncPath(String anyFullname)
-        {
-            // Check for regular share usage
-            if (anyFullname.StartsWith(UncSharePathPrefix, StringComparison.Ordinal))
-            {
-                // it's an unc share, do not edit!
-                return anyFullname;
-            }
-            if (anyFullname.StartsWith(UncLocalPathPrefix, StringComparison.Ordinal))
-            {
-                // it's an unc local, do not edit!
-                return anyFullname;
-            }
-
-            if (anyFullname.StartsWith(RegularSharePathPrefix, StringComparison.Ordinal))
-            {
-                return ToShareUncPath(anyFullname); // Convert
-            }
-            // ehmm.. must be local regular path
-            if (anyFullname.StartsWith(RegularLocalPathPrefix, StringComparison.Ordinal))
-            {
-                return ToLocalUncPath(anyFullname); // Convert
-            }
-
-            return anyFullname;
-        }
-
 
         /// <summary>
         /// Converts an unc path to a local regular path
@@ -135,28 +56,6 @@ namespace Minimal
         }
 
         /// <summary>
-        /// Converts a regular local path to an unc path
-        /// </summary>
-        /// <param name="regularLocalPath">Regular Path</param>
-        /// <example>C:\temp\file.txt >> \\?\C:\temp\file.txt</example>
-        /// <returns>Local Unc Path</returns>
-        public static String ToLocalUncPath(String regularLocalPath)
-        {
-            return UncLocalPathPrefix + regularLocalPath;
-        }
-
-        /// <summary>
-        /// Converts a regular share path to an unc path
-        /// </summary>
-        /// <param name="regularSharePath">Regular Path</param>
-        /// <example>\\server\share\file.txt >> \\?\UNC\server\share\file.txt</example>
-        /// <returns>QuickIOShareInfo Unc Path</returns>
-        public static String ToShareUncPath(String regularSharePath)
-        {
-            return UncSharePathPrefix + regularSharePath.Substring(2);
-        }
-
-        /// <summary>
         /// Gets name of file or directory
         /// </summary>
         /// <param name="fullName">Path</param>
@@ -170,52 +69,11 @@ namespace Minimal
         }
 
         /// <summary>
-        /// A wrapper for <see cref="Path.GetFullPath"/>
-        /// </summary>
-        public static String GetFullPath(String path)
-        {
-            return Path.GetFullPath(path);
-        }
-
-        /// <summary>
-        /// A wrapper for <see cref="Path.GetFullPath"/> that returns <see cref="PathInfo"/>
-        /// </summary>
-        public static PathInfo GetFullPathInfo(String path)
-        {
-            return new PathInfo(Path.GetFullPath(path));
-        }
-
-        /// <summary>
         /// Removes Last <see cref="Path.DirectorySeparatorChar "/>
         /// </summary>
         private static String TrimTrailingSepartor(String path)
         {
             return path.TrimEnd(Path.DirectorySeparatorChar);
-        }
-
-        /// <summary>
-        /// Returns root from path by given location type
-        /// </summary>
-        public static string GetRootFromLocalPath(String path, LocalOrShare location)
-        {
-            switch (location)
-            {
-                case LocalOrShare.Local:
-                {
-                    return path.Substring(0, 3);
-                }
-                case LocalOrShare.Share:
-                {
-                    var pathElements = path.Substring(2).Split(Path.DirectorySeparatorChar);
-                    if (pathElements.Length < 2)
-                    {
-                        throw new Exception("Path is invalid for Location " + location);
-                    }
-                    return RegularSharePathPrefix + pathElements[0] + Path.DirectorySeparatorChar + pathElements[1];
-                }
-            }
-
-            throw new ArgumentException("QuickIOPathLocation " + location + " not supported.");
         }
 
         /// <summary>
@@ -261,45 +119,6 @@ namespace Minimal
         }
 
         /// <summary>
-        /// Returns <see cref="Path.GetRandomFileName"/>
-        /// </summary>
-        /// <returns><see cref="Path.GetRandomFileName"/></returns>
-        public static String GetRandomFileName()
-        {
-            return Path.GetRandomFileName();
-        }
-
-        /// <summary>
-        /// Returns <see cref="Path.GetRandomFileName"/> without extension
-        /// </summary>
-        /// <returns><see cref="Path.GetRandomFileName"/> without extension</returns>
-        public static String GetRandomDirectoryName()
-        {
-            return Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
-        }
-
-        /// <summary>
-        /// Returns the parent directory path
-        ///  </summary>
-        /// <param name="fullName">Path to get the parent from</param>
-        /// <returns>Parent directory</returns>
-        public static String GetParentPath(string fullName)
-        {
-            return new PathInfo(fullName).ParentFullName;
-        }
-
-        /// <summary>
-        /// Returns the root directory path
-        ///  </summary>
-        /// <param name="fullName">Path to get the parent from</param>
-        /// <returns>Root directory</returns>
-        public static String GetRoot(String fullName)
-        {
-            return new PathInfo(fullName).RootFullName;
-        }
-
-
-        /// <summary>
         /// Returns true if path is local regular path such as 'C:\folder\folder\file.txt'
         /// </summary>
         /// <param name="path">Path</param>
@@ -318,8 +137,6 @@ namespace Minimal
         {
             return (path.Length >= 7 && path[0] == '\\' && path[1] == '\\' && (path[2] == '?' || path[2] == '.') && path[3] == '\\' && IsLocalRegularPath(path.Substring(4)));
         }
-
-
 
         /// <summary>
         /// Returns true if path is share regular path such as '\\server\share\folder\file.txt'

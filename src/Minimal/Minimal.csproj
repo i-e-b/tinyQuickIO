@@ -34,7 +34,7 @@
     <Reference Include="System.IO.Compression" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="File.cs" />
+    <Compile Include="NativeIO.cs" />
     <Compile Include="WorkingParts\FileDetail.cs" />
     <Compile Include="WorkingParts\FileSecurity.cs" />
     <Compile Include="WorkingParts\Flags.cs" />
