@@ -686,8 +686,11 @@
             bool failOnExists = !overwrite;
 
             bool result = Win32SafeNativeMethods.CopyFile(sourceFilePath.FullNameUnc, targetFilePath.FullNameUnc, failOnExists);
-            int win32Error = Marshal.GetLastWin32Error();
-            NativeExceptionMapping(sourceFilePath.FullName, win32Error);
+            if (!result)
+            {
+                int win32Error = Marshal.GetLastWin32Error();
+                NativeExceptionMapping(sourceFilePath.FullName, win32Error);
+            }
             return result;
         }
 

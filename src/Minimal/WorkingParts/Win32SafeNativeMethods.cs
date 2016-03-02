@@ -115,7 +115,10 @@ namespace Minimal
         /// </summary>
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool CopyFile(string fullNameSource, string fullNameTarget, bool failOnExists);
+        internal static extern bool CopyFile(
+            [MarshalAs(UnmanagedType.LPWStr)] string fullNameSource,
+            [MarshalAs(UnmanagedType.LPWStr)] string fullNameTarget,
+            [MarshalAs(UnmanagedType.Bool)] bool failOnExists);
 
         /// <summary>
         /// Removes a file.
