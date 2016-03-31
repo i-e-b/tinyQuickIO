@@ -35,6 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NativeIO.cs" />
+    <Compile Include="WorkingParts\SymbolicLinkReparseData.cs" />
     <Compile Include="WorkingParts\FileDetail.cs" />
     <Compile Include="WorkingParts\FileSecurity.cs" />
     <Compile Include="WorkingParts\Flags.cs" />

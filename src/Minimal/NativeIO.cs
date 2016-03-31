@@ -6,6 +6,7 @@
     using System.IO;
     using System.Runtime.InteropServices;
     using System.Security.Permissions;
+    using System.Text;
     using Microsoft.Win32.SafeHandles;
 
     [FileIOPermission(SecurityAction.Demand, AllFiles = FileIOPermissionAccess.AllAccess)]
@@ -804,6 +805,94 @@
         public static int GetShareEnumResult(string machineName, AdminOrNormal level, out IntPtr buffer, out int entriesRead, out int totalEntries, ref int resumeHandle)
         {
             return Win32SafeNativeMethods.NetShareEnum(machineName, (int)level, out buffer, -1, out entriesRead, out totalEntries, ref resumeHandle);
+        }
+
+
+
+
+        public static class SymbolicLink
+        {
+            private const uint GenericReadAccess = 0x80000000;
+            private const uint FileFlagsForOpenReparsePointAndBackupSemantics = 0x02200000;
+            private const int ioctlCommandGetReparsePoint = 0x000900A8;
+            private const uint OpenExisting = 0x3;
+            private const uint PathNotAReparsePointError = 0x80071126;
+            private const uint ShareModeAll = 0x7; // Read, Write, Delete
+            private const uint SymLinkTag = 0xA000000C;
+            private const int TargetIsAFile = 0;
+            private const int TargetIsADirectory = 1;
+
+            public static void CreateDirectoryLink(string linkPath, string targetPath)
+            {
+                if (Win32SafeNativeMethods.CreateSymbolicLink(linkPath, targetPath, TargetIsADirectory) && Marshal.GetLastWin32Error() == 0) { return; }
+                try
+                {
+                    Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
+                }
+                catch (COMException exception)
+                {
+                    throw new IOException(exception.Message, exception);
+                }
+            }
+
+            public static void CreateFileLink(string linkPath, string targetPath)
+            {
+                if (!Win32SafeNativeMethods.CreateSymbolicLink(linkPath, targetPath, TargetIsAFile))
+                {
+                    Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
+                }
+            }
+
+            private static SafeFileHandle getFileHandle(string path)
+            {
+                return Win32SafeNativeMethods.CreateFile(path, GenericReadAccess, ShareModeAll, IntPtr.Zero, OpenExisting,
+                    FileFlagsForOpenReparsePointAndBackupSemantics, IntPtr.Zero);
+            }
+
+            public static string GetTarget(string path)
+            {
+                using (var fileHandle = getFileHandle(path))
+                {
+                    if (fileHandle.IsInvalid)
+                    {
+                        Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
+                    }
+
+                    int outBufferSize = Marshal.SizeOf(typeof(SymbolicLinkReparseData));
+                    IntPtr outBuffer = IntPtr.Zero;
+                    SymbolicLinkReparseData reparseDataBuffer;
+                    try
+                    {
+                        outBuffer = Marshal.AllocHGlobal(outBufferSize);
+                        int bytesReturned;
+                        bool success = Win32SafeNativeMethods.DeviceIoControl(
+                            fileHandle.DangerousGetHandle(), ioctlCommandGetReparsePoint, IntPtr.Zero, 0,
+                            outBuffer, outBufferSize, out bytesReturned, IntPtr.Zero);
+
+                        fileHandle.Close();
+
+                        if (!success)
+                        {
+                            if (((uint)Marshal.GetHRForLastWin32Error()) == PathNotAReparsePointError)
+                            {
+                                return null;
+                            }
+                            Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
+                        }
+
+                        reparseDataBuffer = (SymbolicLinkReparseData)Marshal.PtrToStructure(
+                            outBuffer, typeof(SymbolicLinkReparseData));
+                    }
+                    finally
+                    {
+                        Marshal.FreeHGlobal(outBuffer);
+                    }
+
+                    return reparseDataBuffer.ReparseTag != SymLinkTag
+                        ? null
+                        : Encoding.Unicode.GetString(reparseDataBuffer.PathBuffer, reparseDataBuffer.PrintNameOffset, reparseDataBuffer.PrintNameLength);
+                }
+            }
         }
     }
 }
