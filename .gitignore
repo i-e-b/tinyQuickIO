@@ -1,7 +1,8 @@
+.vs/
 *.DotSettings
 obj
-bin
-lib
+bin/
+lib/
 deploy
 *.csproj.user
 *.suo

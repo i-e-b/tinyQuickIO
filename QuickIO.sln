@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minimal", "src\Minimal\Minimal.csproj", "{0F46CCEC-5AA5-4FE2-B9FB-CFBA205FCBCA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "tests\IntegrationTests\IntegrationTests.csproj", "{31A4B9D4-0F73-42ED-AB4C-D9F7511095EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EvenSmaller", "EvenSmaller\EvenSmaller.csproj", "{D1D0478F-AADC-4595-8B05-6009D2A42F39}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,8 +23,15 @@ Global
 		{31A4B9D4-0F73-42ED-AB4C-D9F7511095EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31A4B9D4-0F73-42ED-AB4C-D9F7511095EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31A4B9D4-0F73-42ED-AB4C-D9F7511095EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1D0478F-AADC-4595-8B05-6009D2A42F39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1D0478F-AADC-4595-8B05-6009D2A42F39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1D0478F-AADC-4595-8B05-6009D2A42F39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1D0478F-AADC-4595-8B05-6009D2A42F39}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {06224689-4940-4552-85BA-20C3B447921D}
 	EndGlobalSection
 EndGlobal
