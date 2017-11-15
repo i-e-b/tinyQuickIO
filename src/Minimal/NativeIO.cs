@@ -871,7 +871,7 @@
 
                         fileHandle.Close();
 
-                        if (!success)
+                        if (!success || bytesReturned <= 0)
                         {
                             if (((uint)Marshal.GetHRForLastWin32Error()) == PathNotAReparsePointError)
                             {
@@ -892,6 +892,14 @@
                         ? null
                         : Encoding.Unicode.GetString(reparseDataBuffer.PathBuffer, reparseDataBuffer.PrintNameOffset, reparseDataBuffer.PrintNameLength);
                 }
+            }
+            
+            public static bool IsSymLink(Win32FindData win32FindData)
+            {
+                return
+                    ((uint)win32FindData.dwFileAttributes & (uint)FileAttributes.ReparsePoint) == (uint)FileAttributes.ReparsePoint
+                    &&
+                    ((uint)win32FindData.dwReserved0 & SymLinkTag) == SymLinkTag;
             }
         }
     }
