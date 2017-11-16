@@ -7,9 +7,9 @@
     <ProjectGuid>{0F46CCEC-5AA5-4FE2-B9FB-CFBA205FCBCA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Minimal</RootNamespace>
+    <RootNamespace>Native</RootNamespace>
     <AssemblyName>Minimal</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>

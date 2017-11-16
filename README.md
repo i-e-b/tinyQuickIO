@@ -11,6 +11,20 @@ This project will not follow changes to QuickIO.
 Getting started
 ---------------
 
-Look at the test suites for examples.
-Most calls are based on the `NativeIO` static object in the `Minimal` namespace.
+Most of what you need are static methods on the NativeIO object.
+
+```csharp
+using Native;
+. . .
+
+NativeIO.CreateDirectory(new PathInfo(@"your\path\here"), recursive: true);
+NativeIO.DeleteDirectory(new DirectoryDetail(@"your"), recursive: true);
+var names = NativeIO.EnumerateFiles(PullRequestRoot, ResultType.DirectoriesOnly).Select(f=>f.Name).ToList();
+
+if (NativeIO.SymbolicLink.IsSymLink(srcFile)) { . . . }
+
+```
+
+Look at the test suites for some examples.
+Most calls are based on the `NativeIO` static object in the `Native` namespace.
 

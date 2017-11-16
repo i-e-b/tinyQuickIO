@@ -1,3 +1,5 @@
+using Native;
+
 namespace Minimal
 {
     using System;

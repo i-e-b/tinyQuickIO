@@ -1,14 +1,15 @@
-﻿namespace Minimal
-{
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.IO;
-    using System.Runtime.InteropServices;
-    using System.Security.Permissions;
-    using System.Text;
-    using Microsoft.Win32.SafeHandles;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Security.Permissions;
+using System.Text;
+using Microsoft.Win32.SafeHandles;
+using Minimal;
 
+namespace Native
+{
     [FileIOPermission(SecurityAction.Demand, AllFiles = FileIOPermissionAccess.AllAccess)]
     public static class NativeIO
     {
@@ -807,8 +808,87 @@
             return Win32SafeNativeMethods.NetShareEnum(machineName, (int)level, out buffer, -1, out entriesRead, out totalEntries, ref resumeHandle);
         }
 
+        
+        /// <summary>
+        ///     Read contents of a directory
+        /// </summary>
+        /// <param name="uncDirectoryPath">Path of the directory</param>
+        /// <param name="results">Select to return file, directories, or both</param>
+        /// <param name="pattern">Search pattern. Uses Win32 native filtering.</param>
+        /// <param name="searchOption">
+        ///     <see cref="SearchOption" />
+        /// </param>
+        /// <param name="enumerateOptions">The enumeration options for exception handling</param>
+        /// <returns>Collection of files</returns>
+        public static IEnumerable<FileDetail> EnumerateFiles(String uncDirectoryPath, ResultType results, String pattern = "*", SearchOption searchOption = SearchOption.TopDirectoryOnly, SuppressExceptions enumerateOptions = SuppressExceptions.None)
+        {
+            // Match for start of search
+            string currentPath = PathTools.Combine(uncDirectoryPath, pattern);
 
+            // Find First file
+            var win32FindData = new Win32FindData();
+            int win32Error;
+            using (var fileHandle = FindFirstFileManaged(currentPath, win32FindData, out win32Error))
+            {
+                // Take care of invalid handles
+                if (fileHandle.IsInvalid && EnumerationHandleInvalidFileHandle(uncDirectoryPath, enumerateOptions, win32Error))
+                {
+                    yield return null;
+                }
 
+                // evaluate results
+                do
+                {
+                    // Ignore . and .. directories
+                    if (IsSystemDirectoryEntry(win32FindData))
+                    {
+                        continue;
+                    }
+
+                    // Create hit for current search result
+                    var resultPath = PathTools.Combine(uncDirectoryPath, win32FindData.cFileName);
+
+                    // Check for Directory
+                    if (ContainsFileAttribute(win32FindData.dwFileAttributes, FileAttributes.Directory))
+                    {
+                        if (results == ResultType.DirectoriesOnly || results == ResultType.FilesAndDirectories)
+                        {
+                            yield return new FileDetail(resultPath, win32FindData);
+                        }
+
+                        // SubFolders?
+                        if (searchOption == SearchOption.AllDirectories)
+                        {
+                            // check for sym link (always ignored in this copy)
+                            if (SymbolicLink.IsSymLink(win32FindData)) { continue; }
+
+                            foreach (var match in EnumerateFiles(resultPath, results, pattern, searchOption, enumerateOptions))
+                            {
+                                yield return match;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (results == ResultType.FilesOnly || results == ResultType.FilesAndDirectories)
+                        {
+                            yield return new FileDetail(resultPath, win32FindData);
+                        }
+                    }
+
+                    // Create new FindData object for next result
+                    win32FindData = new Win32FindData();
+                } // Search for next entry
+                while (Win32SafeNativeMethods.FindNextFile(fileHandle, win32FindData));
+            }
+        }
+
+        
+
+        public enum ResultType
+        {
+            FilesOnly, DirectoriesOnly, FilesAndDirectories
+        }
 
         public static class SymbolicLink
         {
@@ -892,6 +972,12 @@
                         ? null
                         : Encoding.Unicode.GetString(reparseDataBuffer.PathBuffer, reparseDataBuffer.PrintNameOffset, reparseDataBuffer.PrintNameLength);
                 }
+            }
+
+            public static bool IsSymLink(PathInfo pathInfo) {
+                var ok = NativeIO.TryGetFindDataFromPath(pathInfo, out var pathFindData);
+                if (!ok) return false;
+                return IsSymLink(pathFindData);
             }
             
             public static bool IsSymLink(Win32FindData win32FindData)

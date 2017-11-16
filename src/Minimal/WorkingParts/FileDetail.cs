@@ -1,4 +1,6 @@
-﻿namespace Minimal
+﻿using Native;
+
+namespace Minimal
 {
     using System;
     using System.IO;

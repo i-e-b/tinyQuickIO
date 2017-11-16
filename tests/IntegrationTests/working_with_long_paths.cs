@@ -1,4 +1,6 @@
-﻿namespace IntegrationTests
+﻿using Native;
+
+namespace IntegrationTests
 {
     using System.IO;
     using System.Text;
@@ -8,7 +10,7 @@
     [TestFixture]
     public class working_with_long_paths 
     {
-        const string TempRoot = @"W:\Temp";
+        const string TempRoot = @"C:\Temp";
 
         [TestFixtureSetUp]
         public static void setup() {
@@ -51,8 +53,10 @@
                 fs.Flush();
             }
 
+
             // copy the file elsewhere
             Assert.True(NativeIO.Exists(srcFile), "Source file can't be found (didn't write correctly?)");
+            Assert.False(NativeIO.SymbolicLink.IsSymLink(srcFile), "File was a sym-link");
             Assert.True(NativeIO.CopyFile(srcFile, dstFile), "Failed to copy file");
             Assert.True(NativeIO.Exists(dstFile), "Target file can't be found");
 
